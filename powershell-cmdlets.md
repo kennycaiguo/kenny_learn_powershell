@@ -454,3 +454,60 @@ get-service|export-csv ser.csv -notypeinformation -confirm
 ```pow
 get-service|export-csv ser.csv -notypeinformation -useCulture
 ```
+
+## powershell扩展命令
+
+获取已经注册的pssnapin
+
+```powershell
+get-pssnapin -registered
+```
+
+![image-20251120072124687](assets/image-20251120072124687.png)
+
+获取ps模块的存放地址
+
+```powershell
+get-content env:psmodulepath
+```
+
+![image-20251120072205143](assets/image-20251120072205143.png)
+
+获取所有网络相关的命令
+
+```powershell
+ help *network*
+```
+
+![image-20251120072343916](assets/image-20251120072343916.png)
+
+查看所有包涵dns的命令
+
+```powershell
+help *dns*
+```
+
+![image-20251120072817581](assets/image-20251120072817581.png)
+
+```powershell
+import-module -name DnsClient
+get-command -module DnsClient
+```
+
+![image-20251120073217034](assets/image-20251120073217034.png)
+
+清理dns客户缓存的命令
+
+```powershell
+clear-dnsclientcache -verbose
+```
+
+![image-20251120073523283](assets/image-20251120073523283.png)
+
+允许powershell执行脚本,需要下面的命令
+
+```powershell
+set-executionpolicy remotesigned
+```
+
+![image-20251120074101289](assets/image-20251120074101289.png)
