@@ -511,3 +511,201 @@ set-executionpolicy remotesigned
 ```
 
 ![image-20251120074101289](assets/image-20251120074101289.png)
+
+### 使用powershellget模块,需要安装
+
+默认有一个源,又微软维护: https://www.powershellgallery.com/
+
+# 如何安装 PowerShellGet 和 PSResourceGet
+
+
+
+## 先决条件
+
+确保安装了高于 1.0.0.1 的 **PowerShellGet** 和 **PackageManagement** 版本。 最新的稳定版本是 2.2.5 for **PowerShellGet** 和 1.4.8.1 for **PackageManagement**。
+
+如果运行 Windows PowerShell 5.1 和 **PowerShellGet** 1.0.0.1，请参阅[更新 PowerShellGet for Windows PowerShell 5.1](https://learn.microsoft.com/zh-cn/powershell/gallery/powershellget/update-powershell-51?view=powershellget-3.x)。
+
+若要访问 PowerShell 库，必须使用传输层安全性 (TLS) 1.2 或更高版本。 使用以下命令在 PowerShell 会话中启用 TLS 1.2。
+
+PowerShell
+
+```powershell
+[Net.ServicePointManager]::SecurityProtocol =
+    [Net.ServicePointManager]::SecurityProtocol -bor
+    [Net.SecurityProtocolType]::Tls12
+```
+
+将此命令添加到 PowerShell 配置文件脚本，以确保为每个 PowerShell 会话配置 TLS 1.2。 有关配置文件的详细信息，请参阅 [about_Profiles](https://learn.microsoft.com/zh-cn/powershell/module/microsoft.powershell.core/about/about_profiles)。
+
+如果运行的是 PowerShell 6.0 或更高版本，则已安装较新版本的 **PowerShellGet** 和 **PackageManagement** 。 如有必要，可以升级到较新版本，也可以安装预览版。 应始终安装最新的稳定版本。
+
+使用以下命令查看已安装的版本。
+
+PowerShell
+
+```powershell
+Get-Module PowerShellGet, PackageManagement -ListAvailable
+```
+
+以下输出显示需要安装最新的稳定版本。
+
+Output
+
+```Output
+    Directory: C:\Program Files\WindowsPowerShell\Modules
+
+
+ModuleType Version  Name               ExportedCommands
+---------- -------  ----               ----------------
+Binary     1.0.0.1  PackageManagement  {Find-Package, Get-Package, ...
+Script     1.0.0.1  PowerShellGet      {Install-Module, Find-Module, ...
+```
+
+
+
+## 安装最新的稳定版本
+
+若要安装这些模块的最新版本，请运行以下命令：
+
+PowerShell
+
+```powershell
+Install-Module PowerShellGet -Force -AllowClobber
+```
+
+
+
+## 安装 Microsoft.PowerShell.PSResourceGet
+
+**Microsoft.PowerShell.PSResourceGet** 是 PowerShell 的新包管理解决方案。 使用此模块，不再需要使用 **PowerShellGet** 和 **PackageManagement**。 但是，它可以与现有的 **PowerShellGet** 模块并行安装。 若要与现有 **PowerShellGet 版本并行安装 Microsoft.PowerShell.PSResourceGet**，请打开任何 PowerShell 控制台并运行：
+
+PowerShell
+
+```powershell
+Install-Module Microsoft.PowerShell.PSResourceGet -Repository PSGallery
+```
+
+**Microsoft.PowerShell.PSResourceGet** 已预装 PowerShell 7.4 及更高版本。
+
+# powershell面向对象特性学习
+
+可以把一个数据表看成是一个对象的集合,每一行可以看作是一个对象,每一列可以看作是对象的属性,此外对象还有行为,也就是方法...
+
+### 1.获取对象的成员get-member,简写是gm
+
+```powershell
+get-process|gm
+```
+
+![image-20251121103259446](assets/image-20251121103259446.png)
+
+### 2.调用对象的方法,很多进程都有有一个kill()方法,如我们可以先打开一个notepad进程,然后使用下面的命令来终止这个进程
+
+```powershell
+(get-process -name notepad).kill()
+```
+
+可以这么来看notepad进程对象的属性和方法,前提是必须有一个notepad正在运行
+
+```powershell
+get-process -name notepad | gm
+```
+
+![image-20251121111231835](assets/image-20251121111231835.png)
+
+可以看到,它是有一个Kill()方法的.
+
+### 3对象排序
+
+#### get-process命令返回的是一个集合,我们就可以对这个集合进行排序
+
+```powershell
+get-process | sort-object -property cpu 或者简写 get-process | sort cpu
+```
+
+![image-20251121112331659](assets/image-20251121112331659.png)
+
+#### 还可以降序排列,好处是可以看到哪些进程使用最多cpu资源
+
+```powershell
+Get-Process | sort cpu -desc
+```
+
+![image-20251121112531457](assets/image-20251121112531457.png)
+
+#### 还可以按多个列来排序
+
+```powershell
+Get-Process | sort cpu,id -desc
+```
+
+![image-20251121112828564](assets/image-20251121112828564.png)
+
+#### 还可以选择自己需要的属性,配合select-object
+
+```powershell
+ Get-Process | sort cpu,id -desc | select-object -property id,cpu,processname
+```
+
+![image-20251121113120487](assets/image-20251121113120487.png)
+
+#### 练习(第八章)
+
+##### 1.生成随机数的cmdlet
+
+```powershell
+get-random -minimum 1 -maximum 100
+```
+
+![image-20251121114038051](assets/image-20251121114038051.png)
+
+#####  2.显示当前日期时间的cmdlet
+
+```powershell
+get-date
+```
+
+![image-20251121114151767](assets/image-20251121114151767.png)
+
+##### 3.get-data获取到的对象是SysTem.DataTime对象
+
+##### 4.给get-date函数添加过滤使他显示dayofweek
+
+```powershell
+ get-date | select dayofweek
+```
+
+![image-20251121114438789](assets/image-20251121114438789.png)
+
+##### 5.显示window的hotfix
+
+```powershell
+get-hotfix
+```
+
+![image-20251121114604815](assets/image-20251121114604815.png)
+
+##### 6.对hotfix按照安装日期进行排序标签只显示安装日期,id和安装用户
+
+```powershell
+get-hotfix | sort installedon | select hotfixid,installedBy,installedon
+```
+
+![image-20251121114921108](assets/image-20251121114921108.png)
+
+##### 7.对hotfix按照描述排序,标签只显示描述,id和安装日期
+
+```powershell
+get-hotfix | sort description | select description,hotfixid,installedon
+```
+
+![image-20251121115202666](assets/image-20251121115202666.png)
+
+##### 8.从系统安全日志中选择50条,按时间和索引升序排列,显示索引时间来源,并且输出到一个txt文件
+
+```powershell
+get-eventlog -logname security -newest 50 | sort timegenerated ,index | select index,timegenerated,source | out-file event.txt
+```
+
+![image-20251121132249850](assets/image-20251121132249850.png)
